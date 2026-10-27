@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1450" height="900" viewBox="0 0 1450 900">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .n { font-size: 15px; font-weight: 700; fill: #fff; text-anchor: middle; }
+    .k { font-size: 11px; fill: #eef4fb; text-anchor: middle; font-style: italic; }
+    .d { font-size: 11.5px; fill: #fff; text-anchor: middle; }
+    .l { font-size: 11.5px; fill: #333; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+    .tit { font-size: 20px; font-weight: 700; fill: #222; }
+    .b { font-size: 13px; font-weight: 700; fill: #1168BD; }
+    .c { stroke: #555; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+    .m { stroke: #8a5a00; stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; marker-end: url(#a); }
+    .ct { fill: #438DD5; }
+    .ex { fill: #8C8C8C; }
+  </style>
+  <rect width="1450" height="900" fill="#fff"/>
+  <text x="24" y="34" class="tit">[C4 · Nivel 2] Contenedores</text>
+
+  <!-- Externos superiores -->
+  <rect x="480" y="50" width="210" height="80" rx="8" class="ex"/>
+  <text x="585" y="80" class="n">Open-Meteo API</text>
+  <text x="585" y="97" class="k">[Sistema externo · HTTPS]</text>
+  <text x="585" y="116" class="d">Clima actual + lluvia 30 días</text>
+
+  <!-- Frontera -->
+  <rect x="200" y="155" width="1030" height="720" rx="10" fill="none" stroke="#1168BD" stroke-width="2" stroke-dasharray="10 6"/>
+  <text x="215" y="178" class="b">Sistema de Riesgo de Incendios [Docker Compose en VM · producción: AWS EKS sa-east-1]</text>
+
+  <!-- Persona -->
+  <circle cx="95" cy="365" r="24" fill="#08427B"/>
+  <rect x="20" y="389" width="150" height="85" rx="18" fill="#08427B"/>
+  <text x="95" y="414" class="n">Usuario</text>
+  <text x="95" y="431" class="k">[Persona]</text>
+  <text x="95" y="452" class="d">analista / admin</text>
+
+  <!-- Fila A -->
+  <rect x="230" y="200" width="210" height="100" rx="8" class="ct"/>
+  <text x="335" y="228" class="n">Frontend Web</text>
+  <text x="335" y="245" class="k">[HTML · JS · Leaflet]</text>
+  <text x="335" y="265" class="d">Mapa de comunas, consulta,</text>
+  <text x="335" y="282" class="d">historial y alertas</text>
+
+  <rect x="980" y="200" width="210" height="100" rx="8" class="ct"/>
+  <text x="1085" y="228" class="n">Grafana</text>
+  <text x="1085" y="245" class="k">[Grafana 11]</text>
+  <text x="1085" y="265" class="d">Dashboard: RPS, latencia,</text>
+  <text x="1085" y="282" class="d">errores, CPU/RAM, alertas</text>
+
+  <!-- Fila B -->
+  <rect x="230" y="400" width="210" height="115" rx="8" class="ct"/>
+  <text x="335" y="428" class="n">Balanceador de carga</text>
+  <text x="335" y="445" class="k">[Nginx 1.27 · prod: AWS ALB]</text>
+  <text x="335" y="466" class="d">least_conn, health checks,</text>
+  <text x="335" y="483" class="d">failover, rate limit, TLS,</text>
+  <text x="335" y="500" class="d">cabeceras de seguridad</text>
+
+  <rect x="480" y="400" width="210" height="115" rx="8" class="ct"/>
+  <text x="585" y="428" class="n">API Gateway ×N</text>
+  <text x="585" y="445" class="k">[Python 3.12 · FastAPI]</text>
+  <text x="585" y="466" class="d">JWT + RBAC, orquesta la</text>
+  <text x="585" y="483" class="d">consulta, persiste, publica</text>
+  <text x="585" y="500" class="d">eventos, expone /metrics</text>
+
+  <rect x="730" y="400" width="210" height="115" rx="8" class="ct"/>
+  <text x="835" y="428" class="n">Servicio IA ×N</text>
+  <text x="835" y="445" class="k">[FastAPI · scikit-learn]</text>
+  <text x="835" y="466" class="d">RandomForest: clasifica</text>
+  <text x="835" y="483" class="d">BAJO/MEDIO/ALTO/EXTREMO</text>
+  <text x="835" y="500" class="d">con probabilidades</text>
+
+  <rect x="980" y="400" width="210" height="115" rx="8" class="ct"/>
+  <text x="1085" y="428" class="n">Prometheus</text>
+  <text x="1085" y="445" class="k">[Prometheus 2.54]</text>
+  <text x="1085" y="466" class="d">Recolecta métricas cada</text>
+  <text x="1085" y="483" class="d">10 s y evalúa reglas</text>
+  <text x="1085" y="500" class="d">de alerta (SLO)</text>
+
+  <!-- Fila C: almacenes (cilindros) -->
+  <path d="M480,655 a105,16 0 0,1 210,0 v100 a105,16 0 0,1 -210,0 z" class="ct"/>
+  <ellipse cx="585" cy="655" rx="105" ry="16" fill="#5fa1e0"/>
+  <text x="585" y="695" class="n">PostgreSQL + PostGIS</text>
+  <text x="585" y="712" class="k">[BD relacional · prod: RDS Multi-AZ]</text>
+  <text x="585" y="732" class="d">usuarios, comunas (geom),</text>
+  <text x="585" y="749" class="d">consultas, alertas</text>
+
+  <path d="M730,655 a105,16 0 0,1 210,0 v100 a105,16 0 0,1 -210,0 z" class="ct"/>
+  <ellipse cx="835" cy="655" rx="105" ry="16" fill="#5fa1e0"/>
+  <text x="835" y="695" class="n">Redis</text>
+  <text x="835" y="712" class="k">[Redis 7 · prod: ElastiCache]</text>
+  <text x="835" y="732" class="d">Caché de clima (TTL 10 min)</text>
+  <text x="835" y="749" class="d">Stream eventos.riesgo</text>
+
+  <rect x="980" y="645" width="210" height="115" rx="8" class="ct"/>
+  <text x="1085" y="673" class="n">Worker de alertas ×N</text>
+  <text x="1085" y="690" class="k">[Python · consumer group]</text>
+  <text x="1085" y="711" class="d">Consume eventos; si ALTO o</text>
+  <text x="1085" y="728" class="d">EXTREMO registra y notifica</text>
+  <text x="1085" y="745" class="d">la alerta</text>
+
+  <!-- Externos -->
+  <rect x="20" y="660" width="150" height="80" rx="8" class="ex"/>
+  <text x="95" y="690" class="n">OpenStreetMap</text>
+  <text x="95" y="707" class="k">[Sistema externo]</text>
+  <text x="95" y="726" class="d">Teselas</text>
+
+  <rect x="1265" y="660" width="165" height="90" rx="8" class="ex" stroke="#444" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="1347" y="690" class="n">AWS SNS</text>
+  <text x="1347" y="707" class="k">[externo · planificado]</text>
+  <text x="1347" y="728" class="d">Correo / SMS</text>
+
+  <!-- Relaciones -->
+  <path class="c" d="M170,400 L230,270"/>
+  <text x="120" y="320" class="l">Usa [HTTPS]</text>
+  <path class="c" d="M170,450 L230,450"/>
+  <text x="172" y="440" class="l">HTTPS</text>
+  <path class="c" d="M335,300 L335,400"/>
+  <text x="342" y="355" class="l">fetch /api/v1 [JSON]</text>
+  <path class="c" d="M95,474 L95,660"/>
+  <text x="100" y="600" class="l">Teselas</text>
+  <path class="c" d="M440,457 L480,457"/>
+  <text x="430" y="392" class="l">least_conn</text>
+  <path class="c" d="M690,445 L730,445"/>
+  <text x="640" y="385" class="l">POST /v1/predict</text>
+  <text x="640" y="371" class="l">REST + X-Internal-Key</text>
+  <path class="c" d="M585,400 L585,130"/>
+  <text x="592" y="320" class="l">GET clima [HTTPS]</text>
+  <path class="c" d="M585,515 L585,640"/>
+  <text x="592" y="580" class="l">SQL · pool psycopg</text>
+  <path class="c" d="M650,515 L790,640"/>
+  <text x="705" y="565" class="l">caché + XADD evento</text>
+  <path class="c" d="M940,705 L980,705"/>
+  <text x="930" y="635" class="l">XREADGROUP</text>
+  <path class="c" d="M1085,760 L1085,835 L585,835 L585,771"/>
+  <text x="760" y="828" class="l">INSERT alerta [SQL]</text>
+  <path class="c" d="M1190,705 L1265,705"/>
+  <text x="1195" y="695" class="l">Notifica</text>
+  <path class="c" d="M1085,300 L1085,400"/>
+  <text x="1092" y="355" class="l">PromQL</text>
+  <path class="m" d="M980,470 L940,470"/>
+  <path class="m" d="M1085,515 L1085,645"/>
+  <path class="m" d="M1020,400 C1000,290 700,290 650,400"/>
+  <text x="760" y="300" class="l">scrape /metrics (api, ia, worker)</text>
+</svg>

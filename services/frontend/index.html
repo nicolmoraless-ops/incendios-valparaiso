@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Riesgo de Incendios · Región de Valparaíso</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <header>
+    <h1>🔥 Riesgo de incendios forestales · Región de Valparaíso</h1>
+    <span id="sesion"></span>
+  </header>
+
+  <section id="login" class="panel">
+    <h2>Iniciar sesión</h2>
+    <form id="form-login">
+      <input id="usuario" placeholder="usuario" autocomplete="username" required>
+      <input id="clave" type="password" placeholder="contraseña" autocomplete="current-password" required>
+      <button>Entrar</button>
+    </form>
+    <p id="error-login" class="error"></p>
+  </section>
+
+  <main id="app" hidden>
+    <div id="mapa"></div>
+    <aside>
+      <section class="panel">
+        <h2>Consultar riesgo</h2>
+        <select id="comuna"></select>
+        <label><input type="checkbox" id="manual"> Ingresar variables manualmente</label>
+        <div id="vars" hidden>
+          <input id="temperatura" type="number" step="0.1" placeholder="Temperatura °C" value="32">
+          <input id="humedad" type="number" step="1" placeholder="Humedad %" value="25">
+          <input id="viento" type="number" step="1" placeholder="Viento km/h" value="35">
+          <input id="dias" type="number" step="1" placeholder="Días sin lluvia" value="40">
+        </div>
+        <button id="btn-consultar">Calcular riesgo</button>
+        <div id="resultado"></div>
+      </section>
+      <section class="panel">
+        <h2>Últimas consultas</h2>
+        <ul id="historial"></ul>
+      </section>
+      <section class="panel" id="panel-alertas" hidden>
+        <h2>Alertas (solo admin)</h2>
+        <ul id="alertas"></ul>
+      </section>
+    </aside>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="780" viewBox="0 0 1400 780">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .n { font-size: 14px; font-weight: 700; fill: #0b2e55; text-anchor: middle; }
+    .k { font-size: 11px; fill: #234; text-anchor: middle; font-style: italic; }
+    .d { font-size: 11.5px; fill: #0b2e55; text-anchor: middle; }
+    .nw { font-size: 14px; font-weight: 700; fill: #fff; text-anchor: middle; }
+    .kw { font-size: 11px; fill: #eef4fb; text-anchor: middle; font-style: italic; }
+    .l { font-size: 11px; fill: #333; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+    .tit { font-size: 20px; font-weight: 700; fill: #222; }
+    .b { font-size: 13px; font-weight: 700; fill: #438DD5; }
+    .c { stroke: #555; stroke-width: 1.5; fill: none; marker-end: url(#a); }
+    .cp { fill: #85BBF0; stroke: #5d9bd8; }
+    .ct { fill: #438DD5; }
+    .ex { fill: #8C8C8C; }
+  </style>
+  <rect width="1400" height="780" fill="#fff"/>
+  <text x="24" y="34" class="tit">[C4 · Nivel 3] Componentes — API Gateway y Servicio IA</text>
+
+  <!-- Contenedores vecinos (arriba) -->
+  <rect x="55" y="50" width="260" height="60" rx="8" class="ex"/>
+  <text x="185" y="76" class="nw">Open-Meteo API</text>
+  <text x="185" y="95" class="kw">[Sistema externo]</text>
+  <rect x="335" y="50" width="260" height="60" rx="8" class="ct"/>
+  <text x="465" y="76" class="nw">Balanceador (Nginx / ALB)</text>
+  <text x="465" y="95" class="kw">[Contenedor]</text>
+
+  <!-- Frontera API -->
+  <rect x="30" y="125" width="880" height="480" rx="10" fill="none" stroke="#438DD5" stroke-width="2" stroke-dasharray="10 6"/>
+  <text x="44" y="146" class="b">API Gateway [Contenedor: Python 3.12 · FastAPI]</text>
+
+  <rect x="55" y="160" width="260" height="95" rx="8" class="cp"/>
+  <text x="185" y="184" class="n">Cliente de clima</text>
+  <text x="185" y="200" class="k">[clima.py · httpx]</text>
+  <text x="185" y="220" class="d">Open-Meteo + caché Redis</text>
+  <text x="185" y="237" class="d">(cache-aside, TTL 600 s)</text>
+
+  <rect x="335" y="160" width="260" height="95" rx="8" class="cp"/>
+  <text x="465" y="184" class="n">Controlador de autenticación</text>
+  <text x="465" y="200" class="k">[POST /api/v1/auth/login]</text>
+  <text x="465" y="220" class="d">Valida credenciales y</text>
+  <text x="465" y="237" class="d">emite JWT (30 min)</text>
+
+  <rect x="615" y="160" width="260" height="95" rx="8" class="cp"/>
+  <text x="745" y="184" class="n">Middleware de observabilidad</text>
+  <text x="745" y="200" class="k">[middleware · /health · /ready · /metrics]</text>
+  <text x="745" y="220" class="d">Contadores e histogramas,</text>
+  <text x="745" y="237" class="d">logs JSON, X-Request-ID</text>
+
+  <rect x="55" y="320" width="260" height="95" rx="8" class="cp"/>
+  <text x="185" y="344" class="n">Módulo de seguridad</text>
+  <text x="185" y="360" class="k">[auth.py · PyJWT · bcrypt]</text>
+  <text x="185" y="380" class="d">Verifica JWT HS256 y rol</text>
+  <text x="185" y="397" class="d">(requiere_rol: admin/analista)</text>
+
+  <rect x="335" y="320" width="260" height="95" rx="8" class="cp" stroke-width="3"/>
+  <text x="465" y="344" class="n">Controlador de riesgo</text>
+  <text x="465" y="360" class="k">[POST /api/v1/riesgo · orquestador]</text>
+  <text x="465" y="380" class="d">Valida entrada (Pydantic), arma</text>
+  <text x="465" y="397" class="d">variables y coordina el flujo</text>
+
+  <rect x="615" y="320" width="260" height="95" rx="8" class="cp"/>
+  <text x="745" y="344" class="n">Cliente IA</text>
+  <text x="745" y="360" class="k">[httpx · timeout 5 s]</text>
+  <text x="745" y="380" class="d">Invoca /v1/predict con</text>
+  <text x="745" y="397" class="d">X-Internal-Key; cuenta fallos</text>
+
+  <rect x="55" y="480" width="260" height="95" rx="8" class="cp"/>
+  <text x="185" y="504" class="n">Publicador de eventos</text>
+  <text x="185" y="520" class="k">[redis-py · XADD]</text>
+  <text x="185" y="540" class="d">Emite riesgo.calculado al</text>
+  <text x="185" y="557" class="d">stream (no bloquea respuesta)</text>
+
+  <rect x="335" y="480" width="260" height="95" rx="8" class="cp"/>
+  <text x="465" y="504" class="n">Repositorio de datos</text>
+  <text x="465" y="520" class="k">[db.py · psycopg pool 2–10]</text>
+  <text x="465" y="540" class="d">Comunas, consultas con</text>
+  <text x="465" y="557" class="d">geometría PostGIS, alertas</text>
+
+  <rect x="615" y="480" width="260" height="95" rx="8" class="cp"/>
+  <text x="745" y="504" class="n">Controladores de consulta</text>
+  <text x="745" y="520" class="k">[GET /consultas · GET /alertas]</text>
+  <text x="745" y="540" class="d">Historial (autenticado) y</text>
+  <text x="745" y="557" class="d">alertas (solo admin)</text>
+
+  <!-- Almacenes abajo -->
+  <rect x="55" y="650" width="260" height="60" rx="8" class="ct"/>
+  <text x="185" y="676" class="nw">Redis</text>
+  <text x="185" y="695" class="kw">[caché + stream eventos.riesgo]</text>
+  <rect x="335" y="650" width="260" height="60" rx="8" class="ct"/>
+  <text x="465" y="676" class="nw">PostgreSQL + PostGIS</text>
+  <text x="465" y="695" class="kw">[Contenedor de datos]</text>
+
+  <!-- Frontera IA -->
+  <rect x="950" y="125" width="420" height="585" rx="10" fill="none" stroke="#438DD5" stroke-width="2" stroke-dasharray="10 6"/>
+  <text x="964" y="146" class="b">Servicio IA [Contenedor: FastAPI · scikit-learn 1.5]</text>
+
+  <rect x="980" y="165" width="360" height="85" rx="8" class="cp"/>
+  <text x="1160" y="190" class="n">Verificador de clave interna</text>
+  <text x="1160" y="207" class="k">[hmac.compare_digest]</text>
+  <text x="1160" y="228" class="d">Rechaza llamadas que no vienen de la API (401)</text>
+
+  <rect x="980" y="285" width="360" height="85" rx="8" class="cp"/>
+  <text x="1160" y="310" class="n">Validador de entrada</text>
+  <text x="1160" y="327" class="k">[Pydantic · rangos físicos]</text>
+  <text x="1160" y="348" class="d">temperatura, humedad, viento, días sin lluvia, NDVI, pendiente</text>
+
+  <rect x="980" y="405" width="360" height="85" rx="8" class="cp" stroke-width="3"/>
+  <text x="1160" y="430" class="n">Motor de inferencia</text>
+  <text x="1160" y="447" class="k">[RandomForestClassifier · predict_proba]</text>
+  <text x="1160" y="468" class="d">Nivel + probabilidades por clase · latencia ms</text>
+
+  <rect x="980" y="525" width="360" height="85" rx="8" class="cp"/>
+  <text x="1160" y="550" class="n">Registro de modelo</text>
+  <text x="1160" y="567" class="k">[modelo.joblib + metricas.json · rf-1.0.0]</text>
+  <text x="1160" y="588" class="d">Versión, F1-macro, importancia de variables</text>
+
+  <rect x="980" y="630" width="360" height="60" rx="8" class="cp"/>
+  <text x="1160" y="655" class="n">Métricas de inferencia</text>
+  <text x="1160" y="673" class="k">[ia_inferencias_total · ia_inferencia_duracion_segundos]</text>
+
+  <!-- Relaciones -->
+  <path class="c" d="M520,110 L680,160"/>
+  <text x="560" y="128" class="l">todas las solicitudes</text>
+  <path class="c" d="M440,110 L440,160"/>
+  <path class="c" d="M700,255 L560,320"/>
+  <path class="c" d="M400,255 L290,320"/>
+  <text x="300" y="285" class="l">verifica clave</text>
+  <path class="c" d="M335,367 L315,367"/>
+  <path class="c" d="M390,320 L270,255"/>
+  <text x="250" y="300" class="l">obtener()</text>
+  <path class="c" d="M185,160 L185,110"/>
+  <text x="192" y="121" class="l">HTTPS</text>
+  <path class="c" d="M595,367 L615,367"/>
+  <path class="c" d="M465,415 L465,480"/>
+  <path class="c" d="M390,415 L270,480"/>
+  <path class="c" d="M615,527 L595,527"/>
+  <path class="c" d="M185,575 L185,650"/>
+  <text x="192" y="618" class="l">XADD</text>
+  <path class="c" d="M465,575 L465,650"/>
+  <text x="472" y="618" class="l">SQL</text>
+  <path class="c" d="M875,355 L980,215"/>
+  <text x="880" y="290" class="l">POST /v1/predict</text>
+  <path class="c" d="M1160,250 L1160,285"/>
+  <path class="c" d="M1160,370 L1160,405"/>
+  <path class="c" d="M1160,525 L1160,490"/>
+  <text x="1168" y="512" class="l">carga al iniciar</text>
+</svg>

@@ -1,0 +1,22 @@
+groups:
+  - name: slo-incendios
+    rules:
+      - alert: LatenciaP95Alta
+        expr: histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job="api",ruta="/api/v1/riesgo"}[5m]))) > 1
+        for: 5m
+        labels: { severidad: warning }
+        annotations: { resumen: "p95 de /riesgo > 1 s durante 5 min" }
+      - alert: TasaErrores5xx
+        expr: sum(rate(http_requests_total{job="api",codigo=~"5.."}[5m])) / clamp_min(sum(rate(http_requests_total{job="api"}[5m])), 0.001) > 0.02
+        for: 5m
+        labels: { severidad: critical }
+        annotations: { resumen: "Más de 2% de respuestas 5xx" }
+      - alert: ServicioCaido
+        expr: up == 0
+        for: 1m
+        labels: { severidad: critical }
+        annotations: { resumen: "{{ $labels.job }} ({{ $labels.instance }}) no responde" }
+      - alert: RiesgoExtremoDetectado
+        expr: increase(alertas_generadas_total{nivel="EXTREMO"}[10m]) > 0
+        labels: { severidad: info }
+        annotations: { resumen: "Se emitieron alertas de riesgo EXTREMO en {{ $labels.comuna }}" }

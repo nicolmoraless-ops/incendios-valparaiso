@@ -1,0 +1,52 @@
+# Balanceo de entrada. Local: ingress-nginx. En AWS: AWS Load Balancer Controller crea un ALB
+# (cambiar ingressClassName a "alb" y usar las anotaciones alb.ingress.kubernetes.io/*).
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: incendios
+  namespace: incendios
+  annotations:
+    nginx.ingress.kubernetes.io/limit-rps: "30"
+    nginx.ingress.kubernetes.io/load-balance: "ewma"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # ALB (producción):
+    # alb.ingress.kubernetes.io/scheme: internet-facing
+    # alb.ingress.kubernetes.io/target-type: ip
+    # alb.ingress.kubernetes.io/healthcheck-path: /ready
+    # alb.ingress.kubernetes.io/load-balancer-attributes: routing.http2.enabled=true
+    # alb.ingress.kubernetes.io/target-group-attributes: load_balancing.algorithm.type=least_outstanding_requests
+    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:sa-east-1:CUENTA:certificate/ID
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [incendios.local]
+      secretName: incendios-tls
+  rules:
+    - host: incendios.local
+      http:
+        paths:
+          - { path: /api, pathType: Prefix, backend: { service: { name: api, port: { number: 8000 } } } }
+          - { path: /, pathType: Prefix, backend: { service: { name: frontend, port: { number: 80 } } } }
+---
+# Zero-trust interno: el servicio IA solo acepta tráfico desde la API (y Prometheus).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: ia-solo-desde-api, namespace: incendios }
+spec:
+  podSelector: { matchLabels: { app: ia } }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: { matchLabels: { app: api } }
+        - namespaceSelector: { matchLabels: { kubernetes.io/metadata.name: monitoring } }
+      ports: [{ port: 8001 }]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata: { name: datos-solo-desde-backend, namespace: incendios }
+spec:
+  podSelector: { matchExpressions: [{ key: app, operator: In, values: [postgres, redis] }] }
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector: { matchExpressions: [{ key: app, operator: In, values: [api, worker] }] }

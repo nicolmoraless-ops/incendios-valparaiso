@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .n { font-size: 16px; font-weight: 700; fill: #fff; text-anchor: middle; }
+    .k { font-size: 11.5px; fill: #e8f0fb; text-anchor: middle; font-style: italic; }
+    .d { font-size: 12px; fill: #fff; text-anchor: middle; }
+    .l { font-size: 12px; fill: #333; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+    .tit { font-size: 20px; font-weight: 700; fill: #222; }
+    .c { stroke: #555; stroke-width: 1.6; fill: none; marker-end: url(#a); }
+  </style>
+  <rect width="1200" height="700" fill="#fff"/>
+  <text x="24" y="34" class="tit">[C4 · Nivel 1] Contexto — Sistema de riesgo de incendios forestales, Región de Valparaíso</text>
+
+  <!-- Personas -->
+  <circle cx="175" cy="110" r="30" fill="#08427B"/>
+  <rect x="55" y="140" width="240" height="115" rx="22" fill="#08427B"/>
+  <text x="175" y="168" class="n">Analista de riesgo</text>
+  <text x="175" y="186" class="k">[Persona]</text>
+  <text x="175" y="210" class="d">CONAF, municipios, SENAPRED.</text>
+  <text x="175" y="228" class="d">Consulta el riesgo por comuna</text>
+  <text x="175" y="246" class="d">y revisa el historial en el mapa.</text>
+
+  <circle cx="175" cy="420" r="30" fill="#08427B"/>
+  <rect x="55" y="450" width="240" height="115" rx="22" fill="#08427B"/>
+  <text x="175" y="478" class="n">Administrador / Jefe brigada</text>
+  <text x="175" y="496" class="k">[Persona]</text>
+  <text x="175" y="520" class="d">Revisa alertas ALTO/EXTREMO,</text>
+  <text x="175" y="538" class="d">gestiona usuarios y supervisa</text>
+  <text x="175" y="556" class="d">la operación del sistema.</text>
+
+  <!-- Sistema -->
+  <rect x="440" y="250" width="330" height="175" rx="8" fill="#1168BD"/>
+  <text x="605" y="285" class="n">Sistema de Riesgo de Incendios</text>
+  <text x="605" y="305" class="n">Forestales – Valparaíso</text>
+  <text x="605" y="325" class="k">[Sistema de software]</text>
+  <text x="605" y="352" class="d">Clasifica el riesgo (Bajo · Medio · Alto · Extremo)</text>
+  <text x="605" y="370" class="d">con un modelo de IA a partir de clima real y</text>
+  <text x="605" y="388" class="d">variables territoriales; registra consultas</text>
+  <text x="605" y="406" class="d">georreferenciadas y emite alertas.</text>
+
+  <!-- Externos -->
+  <rect x="885" y="70" width="285" height="115" rx="8" fill="#8C8C8C"/>
+  <text x="1027" y="102" class="n">Open-Meteo API</text>
+  <text x="1027" y="120" class="k">[Sistema externo]</text>
+  <text x="1027" y="144" class="d">Temperatura, humedad, viento</text>
+  <text x="1027" y="162" class="d">actuales y precipitación 30 días.</text>
+
+  <rect x="885" y="245" width="285" height="95" rx="8" fill="#8C8C8C"/>
+  <text x="1027" y="277" class="n">OpenStreetMap</text>
+  <text x="1027" y="295" class="k">[Sistema externo]</text>
+  <text x="1027" y="319" class="d">Teselas del mapa base.</text>
+
+  <rect x="885" y="405" width="285" height="110" rx="8" fill="#8C8C8C" stroke="#444" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="1027" y="437" class="n">Notificaciones (AWS SNS)</text>
+  <text x="1027" y="455" class="k">[Sistema externo · planificado]</text>
+  <text x="1027" y="479" class="d">Correo/SMS a brigadas y</text>
+  <text x="1027" y="497" class="d">municipios ante riesgo alto.</text>
+
+  <rect x="440" y="545" width="330" height="115" rx="8" fill="#8C8C8C" stroke="#444" stroke-width="2" stroke-dasharray="7 5"/>
+  <text x="605" y="575" class="n">Datos territoriales e históricos</text>
+  <text x="605" y="593" class="k">[Sistema externo · carga batch]</text>
+  <text x="605" y="617" class="d">CONAF (incendios históricos), NDVI</text>
+  <text x="605" y="635" class="d">Sentinel-2, pendiente (DEM).</text>
+
+  <!-- Relaciones -->
+  <path class="c" d="M295,200 L440,300"/>
+  <text x="300" y="262" class="l">Consulta riesgo y mapa</text>
+  <text x="300" y="278" class="l">[HTTPS · JSON · JWT]</text>
+
+  <path class="c" d="M295,505 L440,385"/>
+  <text x="318" y="410" class="l">Revisa alertas</text>
+  <text x="318" y="426" class="l">[HTTPS · rol admin]</text>
+
+  <path class="c" d="M770,285 L885,140"/>
+  <text x="700" y="180" class="l">Obtiene clima actual y lluvia</text>
+  <text x="700" y="196" class="l">[HTTPS · REST · caché 10 min]</text>
+
+  <path class="c" d="M770,330 L885,295"/>
+  <text x="782" y="352" class="l">Carga teselas</text>
+
+  <path class="c" d="M770,400 L885,455"/>
+  <text x="780" y="455" class="l">Envía alertas</text>
+
+  <path class="c" d="M605,545 L605,425"/>
+  <text x="615" y="500" class="l">NDVI, pendiente, histórico [batch]</text>
+
+
+  <!-- Leyenda -->
+  <rect x="24" y="640" width="16" height="16" fill="#08427B"/><text x="46" y="653" class="l">Persona</text>
+  <rect x="120" y="640" width="16" height="16" fill="#1168BD"/><text x="142" y="653" class="l">Sistema</text>
+  <rect x="210" y="640" width="16" height="16" fill="#8C8C8C"/><text x="232" y="653" class="l">Externo</text>
+  <rect x="300" y="640" width="16" height="16" fill="#8C8C8C" stroke="#444" stroke-dasharray="4 3"/><text x="322" y="653" class="l">Planificado</text>
+</svg>

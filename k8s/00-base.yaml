@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: incendios
+  labels:
+    pod-security.kubernetes.io/enforce: baseline   # postgres/redis locales lo requieren
+    pod-security.kubernetes.io/warn: restricted     # los servicios propios cumplen "restricted"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: incendios-config
+  namespace: incendios
+data:
+  IA_URL: "http://ia:8001"
+  CLIMA_CACHE_TTL: "600"
+  JWT_EXP_MIN: "30"

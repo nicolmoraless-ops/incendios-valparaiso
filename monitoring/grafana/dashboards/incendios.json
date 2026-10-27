@@ -1,0 +1,91 @@
+{
+  "uid": "incendios-valpo",
+  "title": "Riesgo de incendios - Operación del sistema",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "10s",
+  "time": { "from": "now-30m", "to": "now" },
+  "tags": ["incendios", "ia"],
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Servicios arriba",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(up{job!=\"prometheus\"})", "legendFormat": "arriba" }],
+      "fieldConfig": { "defaults": { "thresholds": { "mode": "absolute", "steps": [
+        { "color": "red", "value": null }, { "color": "orange", "value": 3 }, { "color": "green", "value": 4 } ] } } }
+    },
+    {
+      "id": 2, "type": "stat", "title": "RPS total API",
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(rate(http_requests_total{job=\"api\"}[1m]))" }],
+      "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 2 } }
+    },
+    {
+      "id": 3, "type": "stat", "title": "Errores 5xx (%)",
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "100 * sum(rate(http_requests_total{job=\"api\",codigo=~\"5..\"}[5m])) / clamp_min(sum(rate(http_requests_total{job=\"api\"}[5m])), 0.001)" }],
+      "fieldConfig": { "defaults": { "unit": "percent", "decimals": 2, "thresholds": { "mode": "absolute", "steps": [
+        { "color": "green", "value": null }, { "color": "orange", "value": 1 }, { "color": "red", "value": 2 } ] } } }
+    },
+    {
+      "id": 4, "type": "stat", "title": "Alertas emitidas (worker)",
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum(alertas_generadas_total) or vector(0)" }]
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "Solicitudes por segundo por réplica (balanceo)",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum by (instance) (rate(http_requests_total{job=\"api\"}[1m]))", "legendFormat": "{{instance}}" }],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 6, "type": "timeseries", "title": "Latencia /api/v1/riesgo (p50 / p95 / p99)",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [
+        { "refId": "A", "expr": "histogram_quantile(0.50, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"api\",ruta=\"/api/v1/riesgo\"}[5m])))", "legendFormat": "p50" },
+        { "refId": "B", "expr": "histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"api\",ruta=\"/api/v1/riesgo\"}[5m])))", "legendFormat": "p95" },
+        { "refId": "C", "expr": "histogram_quantile(0.99, sum by (le) (rate(http_request_duration_seconds_bucket{job=\"api\",ruta=\"/api/v1/riesgo\"}[5m])))", "legendFormat": "p99" }
+      ],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "id": 7, "type": "timeseries", "title": "Respuestas por código HTTP (401/403 = controles de seguridad)",
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum by (codigo) (rate(http_requests_total{job=\"api\"}[1m]))", "legendFormat": "{{codigo}}" }],
+      "fieldConfig": { "defaults": { "unit": "reqps" } }
+    },
+    {
+      "id": 8, "type": "timeseries", "title": "Latencia de inferencia IA (p95)",
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "histogram_quantile(0.95, sum by (le) (rate(ia_inferencia_duracion_segundos_bucket[5m])))", "legendFormat": "p95 inferencia" }],
+      "fieldConfig": { "defaults": { "unit": "s" } }
+    },
+    {
+      "id": 9, "type": "barchart", "title": "Clasificaciones por nivel de riesgo (últimos 30 min)",
+      "gridPos": { "x": 0, "y": 20, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "sum by (nivel) (increase(ia_inferencias_total[30m]))", "legendFormat": "{{nivel}}", "instant": true, "format": "table" }]
+    },
+    {
+      "id": 10, "type": "timeseries", "title": "CPU por servicio (núcleos)",
+      "gridPos": { "x": 8, "y": 20, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "rate(process_cpu_seconds_total{job!=\"prometheus\"}[1m])", "legendFormat": "{{job}} {{instance}}" }]
+    },
+    {
+      "id": 11, "type": "timeseries", "title": "Memoria residente por servicio",
+      "gridPos": { "x": 16, "y": 20, "w": 8, "h": 8 },
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "targets": [{ "refId": "A", "expr": "process_resident_memory_bytes{job!=\"prometheus\"}", "legendFormat": "{{job}} {{instance}}" }],
+      "fieldConfig": { "defaults": { "unit": "bytes" } }
+    }
+  ]
+}

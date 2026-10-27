@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker>
+  </defs>
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .tit { font-size: 20px; font-weight: 700; fill: #222; }
+    .p { font-size: 13px; font-weight: 700; fill: #fff; text-anchor: middle; }
+    .m { font-size: 11.5px; fill: #222; text-anchor: middle; paint-order: stroke; stroke: #fff; stroke-width: 4px; }
+    .ll { stroke: #999; stroke-width: 1.2; stroke-dasharray: 6 5; }
+    .c { stroke: #333; stroke-width: 1.4; fill: none; marker-end: url(#a); }
+    .r { stroke: #333; stroke-width: 1.2; fill: none; stroke-dasharray: 5 4; marker-end: url(#a); }
+    .act { fill: #dbe9f8; stroke: #438DD5; }
+    .frame { fill: none; stroke: #c2410c; stroke-width: 1.3; }
+    .fl { font-size: 11px; font-weight: 700; fill: #c2410c; }
+  </style>
+  <rect width="1400" height="760" fill="#fff"/>
+  <text x="24" y="34" class="tit">Secuencia: consulta de riesgo para una comuna (POST /api/v1/riesgo)</text>
+
+  <!-- Participantes x: 90, 260, 430, 600, 770, 940, 1110, 1290 -->
+  <g>
+    <rect x="30" y="55" width="120" height="40" rx="6" fill="#08427B"/><text x="90" y="80" class="p">Usuario</text>
+    <rect x="195" y="55" width="130" height="40" rx="6" fill="#438DD5"/><text x="260" y="80" class="p">Nginx / ALB</text>
+    <rect x="365" y="55" width="130" height="40" rx="6" fill="#438DD5"/><text x="430" y="80" class="p">API Gateway</text>
+    <rect x="535" y="55" width="130" height="40" rx="6" fill="#c2410c"/><text x="600" y="80" class="p">Redis</text>
+    <rect x="705" y="55" width="130" height="40" rx="6" fill="#8C8C8C"/><text x="770" y="80" class="p">Open-Meteo</text>
+    <rect x="875" y="55" width="130" height="40" rx="6" fill="#438DD5"/><text x="940" y="80" class="p">Servicio IA</text>
+    <rect x="1045" y="55" width="130" height="40" rx="6" fill="#3B48CC"/><text x="1110" y="80" class="p">PostGIS</text>
+    <rect x="1225" y="55" width="130" height="40" rx="6" fill="#438DD5"/><text x="1290" y="80" class="p">Worker</text>
+  </g>
+  <line class="ll" x1="90" y1="95" x2="90" y2="740"/>
+  <line class="ll" x1="260" y1="95" x2="260" y2="740"/>
+  <line class="ll" x1="430" y1="95" x2="430" y2="740"/>
+  <line class="ll" x1="600" y1="95" x2="600" y2="740"/>
+  <line class="ll" x1="770" y1="95" x2="770" y2="740"/>
+  <line class="ll" x1="940" y1="95" x2="940" y2="740"/>
+  <line class="ll" x1="1110" y1="95" x2="1110" y2="740"/>
+  <line class="ll" x1="1290" y1="95" x2="1290" y2="740"/>
+
+  <rect x="424" y="140" width="12" height="470" class="act"/>
+
+  <path class="c" d="M90,125 L254,125"/><text x="172" y="118" class="m">1. POST /riesgo {comuna} + JWT</text>
+  <path class="c" d="M266,145 L424,145"/><text x="345" y="138" class="m">2. least_conn → réplica</text>
+  <path class="c" d="M436,175 L470,175 L470,190 L442,190"/><text x="545" y="180" class="m">3. valida JWT + rol, Pydantic</text>
+  <path class="c" d="M436,220 L1104,220"/><text x="770" y="213" class="m">4. SELECT comuna (lat, lon, NDVI, pendiente)</text>
+  <path class="r" d="M1104,240 L442,240"/>
+
+  <rect x="400" y="250" width="400" height="126" class="frame"/>
+  <text x="406" y="264" class="fl">alt  caché de clima</text>
+  <path class="c" d="M436,285 L594,285"/><text x="515" y="279" class="m">5. GET clima:lat:lon</text>
+  <path class="r" d="M594,302 L442,302"/><text x="515" y="318" class="m">hit → datos (fin del alt)</text>
+  <line x1="400" y1="326" x2="800" y2="326" stroke="#c2410c" stroke-dasharray="4 3"/>
+  <path class="c" d="M436,345 L764,345"/><text x="660" y="339" class="m">miss → 6. GET forecast</text>
+  <path class="r" d="M764,362 L606,362 L606,362"/><text x="690" y="374" class="m">SETEX 600 s</text>
+
+  <path class="c" d="M436,410 L934,410"/><text x="690" y="403" class="m">7. POST /v1/predict (X-Internal-Key, 6 variables)</text>
+  <rect x="934" y="415" width="12" height="40" class="act"/>
+  <path class="r" d="M934,465 L442,465"/><text x="690" y="458" class="m">8. {nivel, probabilidades, modelo_version}</text>
+  <path class="c" d="M436,500 L1104,500"/><text x="770" y="493" class="m">9. INSERT consulta (geom POINT 4326)</text>
+  <path class="c" d="M436,535 L594,535"/><text x="515" y="528" class="m">10. XADD riesgo.calculado</text>
+  <path class="r" d="M424,580 L266,580"/><text x="345" y="573" class="m">11. 200 {nivel, …}</text>
+  <path class="r" d="M254,600 L96,600"/><text x="172" y="593" class="m">12. respuesta + X-Upstream</text>
+
+  <rect x="580" y="625" width="760" height="105" class="frame"/>
+  <text x="586" y="639" class="fl">asíncrono  (Event-Driven)</text>
+  <path class="c" d="M606,660 L1284,660"/><text x="945" y="653" class="m">13. XREADGROUP alertas → evento</text>
+  <rect x="1284" y="665" width="12" height="55" class="act"/>
+  <path class="c" d="M1284,690 L1116,690"/><text x="1190" y="684" class="m">14. INSERT alerta si ALTO/EXTREMO</text>
+  <path class="c" d="M1284,715 L606,715"/><text x="945" y="709" class="m">15. XACK</text>
+</svg>

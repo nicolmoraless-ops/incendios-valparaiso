@@ -1,0 +1,74 @@
+# Datos para entorno local (minikube/kind). En producción se reemplazan por
+# Amazon RDS PostgreSQL Multi-AZ y Amazon ElastiCache for Redis (multi-AZ).
+apiVersion: apps/v1
+kind: StatefulSet
+metadata: { name: postgres, namespace: incendios }
+spec:
+  serviceName: postgres
+  replicas: 1
+  selector: { matchLabels: { app: postgres } }
+  template:
+    metadata: { labels: { app: postgres } }
+    spec:
+      containers:
+        - name: postgres
+          image: postgis/postgis:16-3.4
+          env:
+            - { name: POSTGRES_DB, value: incendios }
+            - { name: POSTGRES_USER, value: incendios }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: incendios-secrets, key: POSTGRES_PASSWORD } }
+            - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+          ports: [{ containerPort: 5432 }]
+          readinessProbe:
+            exec: { command: ["pg_isready", "-U", "incendios"] }
+            periodSeconds: 5
+          resources:
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { cpu: "1", memory: 1Gi }
+          volumeMounts:
+            - { name: datos, mountPath: /var/lib/postgresql/data }
+            - { name: init, mountPath: /docker-entrypoint-initdb.d }
+      volumes:
+        - name: init
+          configMap: { name: db-init }   # kubectl create configmap db-init --from-file=db/init.sql -n incendios
+  volumeClaimTemplates:
+    - metadata: { name: datos }
+      spec:
+        accessModes: [ReadWriteOnce]
+        resources: { requests: { storage: 5Gi } }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: postgres, namespace: incendios }
+spec:
+  selector: { app: postgres }
+  ports: [{ port: 5432 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: redis, namespace: incendios }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: redis } }
+  template:
+    metadata: { labels: { app: redis } }
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.4-alpine
+          args: ["redis-server", "--requirepass", "$(REDIS_PASSWORD)", "--appendonly", "yes"]
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom: { secretKeyRef: { name: incendios-secrets, key: REDIS_PASSWORD } }
+          ports: [{ containerPort: 6379 }]
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 256Mi }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: redis, namespace: incendios }
+spec:
+  selector: { app: redis }
+  ports: [{ port: 6379 }]

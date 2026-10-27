@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="820" viewBox="0 0 1400 820">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <style>
+    text { font-family: 'Segoe UI', Arial, sans-serif; }
+    .tit { font-size: 20px; font-weight: 700; fill: #222; }
+    .pt { font-size: 16px; font-weight: 700; fill: #3b1f0e; }
+    .n { font-size: 13px; font-weight: 700; fill: #fff; text-anchor: middle; }
+    .k { font-size: 10.5px; fill: #eef4fb; text-anchor: middle; font-style: italic; }
+    .l { font-size: 11.5px; fill: #333; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+    .nt { font-size: 11.5px; fill: #444; }
+    .c { stroke: #555; stroke-width: 1.5; fill: none; marker-end: url(#a); }
+    .cd { stroke: #555; stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; marker-end: url(#a); }
+    .ct { fill: #438DD5; } .ex { fill: #8C8C8C; } .st { fill: #c2410c; } .ok { fill: #15803d; } .bad { fill: #991b1b; }
+    .pn { fill: #faf7f2; stroke: #d6c7b0; stroke-width: 1.5; }
+  </style>
+  <rect width="1400" height="820" fill="#fff"/>
+  <text x="24" y="34" class="tit">Implementación de patrones arquitectónicos</text>
+
+  <!-- Panel 1: Microservicios -->
+  <rect x="20" y="55" width="670" height="365" rx="10" class="pn"/>
+  <text x="38" y="82" class="pt">① Microservicios + API Gateway</text>
+  <rect x="45" y="110" width="140" height="60" rx="8" class="ct"/><text x="115" y="136" class="n">Frontend</text><text x="115" y="153" class="k">imagen frontend:1.0.0</text>
+  <rect x="245" y="110" width="170" height="60" rx="8" class="ct"/><text x="330" y="136" class="n">API Gateway</text><text x="330" y="153" class="k">api:1.0.0 · HPA 3–10</text>
+  <rect x="475" y="110" width="180" height="60" rx="8" class="ct"/><text x="565" y="136" class="n">Servicio IA</text><text x="565" y="153" class="k">ia:1.0.0 · HPA 2–6</text>
+  <rect x="245" y="235" width="170" height="60" rx="8" class="ct"/><text x="330" y="261" class="n">Worker alertas</text><text x="330" y="278" class="k">worker:1.0.0 · 2 réplicas</text>
+  <rect x="475" y="235" width="180" height="60" rx="8" class="ct"/><text x="565" y="261" class="n">PostGIS · Redis</text><text x="565" y="278" class="k">estado fuera de los pods</text>
+  <path class="c" d="M185,140 L245,140"/><text x="190" y="130" class="l">REST</text>
+  <path class="c" d="M415,140 L475,140"/><text x="420" y="130" class="l">REST</text>
+  <path class="cd" d="M330,170 L330,235"/><text x="338" y="208" class="l">evento</text>
+  <path class="c" d="M415,180 L490,235"/>
+  <path class="c" d="M415,265 L475,265"/>
+  <text x="45" y="330" class="nt">• Cada servicio tiene imagen, ciclo de despliegue y escalado propios.</text>
+  <text x="45" y="350" class="nt">• La inferencia (CPU intensiva) escala separada de la API (I/O intensiva).</text>
+  <text x="45" y="370" class="nt">• Servicios sin estado: cualquier réplica atiende cualquier solicitud (JWT).</text>
+  <text x="45" y="390" class="nt">• El gateway centraliza autenticación, validación y métricas.</text>
+
+  <!-- Panel 2: Event-Driven -->
+  <rect x="710" y="55" width="670" height="365" rx="10" class="pn"/>
+  <text x="728" y="82" class="pt">② Event-Driven / Pub-Sub (Redis Streams)</text>
+  <rect x="735" y="120" width="140" height="60" rx="8" class="ct"/><text x="805" y="146" class="n">API (productor)</text><text x="805" y="163" class="k">XADD riesgo.calculado</text>
+  <rect x="925" y="110" width="200" height="80" rx="8" class="st"/>
+  <text x="1025" y="134" class="n">Stream eventos.riesgo</text>
+  <rect x="940" y="148" width="30" height="26" fill="#fff" opacity=".85"/><rect x="975" y="148" width="30" height="26" fill="#fff" opacity=".85"/><rect x="1010" y="148" width="30" height="26" fill="#fff" opacity=".85"/><rect x="1045" y="148" width="30" height="26" fill="#fff" opacity=".85"/><rect x="1080" y="148" width="30" height="26" fill="#fff" opacity=".5"/>
+  <rect x="1180" y="95" width="180" height="50" rx="8" class="ct"/><text x="1270" y="117" class="n">worker-1</text><text x="1270" y="133" class="k">grupo "alertas"</text>
+  <rect x="1180" y="160" width="180" height="50" rx="8" class="ct"/><text x="1270" y="182" class="n">worker-2</text><text x="1270" y="198" class="k">grupo "alertas"</text>
+  <rect x="1180" y="235" width="180" height="50" rx="8" class="ex" stroke="#444" stroke-dasharray="6 4" stroke-width="1.5"/><text x="1270" y="257" class="n">analítica / SNS</text><text x="1270" y="273" class="k">otro grupo · planificado</text>
+  <rect x="925" y="235" width="200" height="50" rx="8" class="ct"/><text x="1025" y="257" class="n">Tabla alertas</text><text x="1025" y="273" class="k">PostgreSQL</text>
+  <path class="c" d="M875,150 L925,150"/>
+  <path class="c" d="M1125,135 L1180,120"/>
+  <path class="c" d="M1125,165 L1180,185"/>
+  <path class="cd" d="M1125,180 L1180,250"/>
+  <path class="c" d="M1180,200 L1125,250"/><text x="1080" y="225" class="l">si ALTO/EXTREMO</text>
+  <text x="735" y="320" class="nt">• La API responde sin esperar la generación de alertas (desacople temporal).</text>
+  <text x="735" y="340" class="nt">• Consumer group reparte eventos entre réplicas; XACK = entrega at-least-once.</text>
+  <text x="735" y="360" class="nt">• Nuevos consumidores se agregan sin modificar la API (extensibilidad).</text>
+  <text x="735" y="380" class="nt">• Si Redis falla, la consulta igual se responde y el error queda en logs.</text>
+
+  <!-- Panel 3: Cache-aside -->
+  <rect x="20" y="440" width="670" height="360" rx="10" class="pn"/>
+  <text x="38" y="467" class="pt">③ Cache-aside (clima)</text>
+  <rect x="45" y="530" width="150" height="60" rx="8" class="ct"/><text x="120" y="556" class="n">Cliente de clima</text><text x="120" y="573" class="k">API Gateway</text>
+  <rect x="300" y="495" width="160" height="60" rx="8" class="st"/><text x="380" y="521" class="n">Redis</text><text x="380" y="538" class="k">clima:lat:lon · TTL 600 s</text>
+  <rect x="300" y="610" width="160" height="60" rx="8" class="ex"/><text x="380" y="636" class="n">Open-Meteo</text><text x="380" y="653" class="k">externo · HTTPS</text>
+  <path class="c" d="M195,545 L300,525"/><text x="200" y="515" class="l">1 GET (hit → responde)</text>
+  <path class="c" d="M195,575 L300,630"/><text x="190" y="625" class="l">2 si miss</text>
+  <path class="c" d="M460,640 C540,640 540,540 460,530"/><text x="515" y="590" class="l">3 SETEX</text>
+  <text x="45" y="710" class="nt">• Las variables meteorológicas cambian en escala de minutos: TTL 10 min.</text>
+  <text x="45" y="730" class="nt">• Evita cientos de llamadas externas por comuna en peaks (protege cuota).</text>
+  <text x="45" y="750" class="nt">• Objetivo: latencia de clima &lt; 5 ms en hit vs ~200–600 ms en miss (estimado).</text>
+  <text x="45" y="770" class="nt">• Si Redis no está disponible se consulta directo (degradación controlada).</text>
+
+  <!-- Panel 4: Alta disponibilidad -->
+  <rect x="710" y="440" width="670" height="360" rx="10" class="pn"/>
+  <text x="728" y="467" class="pt">④ Alta disponibilidad: redundancia + health check + failover</text>
+  <rect x="735" y="560" width="150" height="70" rx="8" class="ct"/><text x="810" y="588" class="n">Balanceador</text><text x="810" y="605" class="k">least_conn · max_fails=3</text>
+  <rect x="945" y="490" width="140" height="44" rx="8" class="bad"/><text x="1015" y="510" class="n">api-1 ✕</text><text x="1015" y="525" class="k">health check falla</text>
+  <rect x="945" y="550" width="140" height="44" rx="8" class="ok"/><text x="1015" y="570" class="n">api-2 ✓</text><text x="1015" y="585" class="k">AZ a</text>
+  <rect x="945" y="610" width="140" height="44" rx="8" class="ok"/><text x="1015" y="630" class="n">api-N ✓</text><text x="1015" y="645" class="k">AZ b</text>
+  <rect x="1150" y="505" width="200" height="50" rx="8" class="ct"/><text x="1250" y="527" class="n">RDS primaria (AZ a)</text><text x="1250" y="543" class="k">escrituras</text>
+  <rect x="1150" y="600" width="200" height="50" rx="8" class="ct" opacity=".75"/><text x="1250" y="622" class="n">RDS standby (AZ b)</text><text x="1250" y="638" class="k">réplica síncrona</text>
+  <path class="cd" d="M885,580 L945,515"/><text x="870" y="532" class="l">retirada</text>
+  <path class="c" d="M885,595 L945,572"/>
+  <path class="c" d="M885,610 L945,630"/>
+  <path class="c" d="M1250,555 L1250,600"/><text x="1258" y="582" class="l">sync</text>
+  <text x="735" y="700" class="nt">• Mínimo 2–3 réplicas por servicio, repartidas entre zonas (topologySpread).</text>
+  <text x="735" y="720" class="nt">• readiness /ready retira réplicas sin BD/Redis; liveness reinicia procesos colgados.</text>
+  <text x="735" y="740" class="nt">• proxy_next_upstream reintenta en otra réplica; PDB mantiene ≥ 2 pods de API.</text>
+  <text x="735" y="760" class="nt">• RDS Multi-AZ: failover automático 60–120 s, RPO ≈ 0 ante caída de una AZ.</text>
+</svg>
