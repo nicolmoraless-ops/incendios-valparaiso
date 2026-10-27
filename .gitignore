@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.pyc
+modelo/
+.venv/
+k8s/02-secrets.yaml
